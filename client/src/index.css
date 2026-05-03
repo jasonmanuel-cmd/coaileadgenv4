@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* COAI Brand — neon green on black */
+  --background: 0 0% 4%;
+  --foreground: 0 0% 95%;
+  --card: 0 0% 8%;
+  --card-foreground: 0 0% 92%;
+  --popover: 0 0% 10%;
+  --popover-foreground: 0 0% 92%;
+  --primary: 120 100% 45%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 0 0% 14%;
+  --secondary-foreground: 0 0% 85%;
+  --muted: 0 0% 12%;
+  --muted-foreground: 0 0% 50%;
+  --accent: 120 100% 45%;
+  --accent-foreground: 0 0% 0%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 16%;
+  --input: 0 0% 14%;
+  --ring: 120 100% 45%;
+  --radius: 0.5rem;
+
+  /* custom tokens */
+  --neon: #00e600;
+  --neon-dim: #00b300;
+  --surface: #0a0a0a;
+  --surface-2: #111111;
+  --surface-3: #1a1a1a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  background: var(--surface);
+  font-family: 'Space Grotesk', sans-serif;
+  color: hsl(var(--foreground));
+}
+
+.font-mono {
+  font-family: 'Space Mono', monospace !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--neon-dim); }
+
+/* Neon glow effect */
+.neon-text {
+  color: var(--neon);
+  text-shadow: 0 0 10px rgba(0, 230, 0, 0.4);
+}
+
+.neon-border {
+  border-color: var(--neon);
+  box-shadow: 0 0 8px rgba(0, 230, 0, 0.2);
+}
+
+/* Lead card hover */
+.lead-card {
+  transition: border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+.lead-card:hover {
+  border-color: var(--neon-dim) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(0, 230, 0, 0.08);
+}
+
+/* Pulse animation for live indicator */
+@keyframes pulse-neon {
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px rgba(0,230,0,0.8); }
+  50% { opacity: 0.5; box-shadow: 0 0 2px rgba(0,230,0,0.2); }
+}
+.pulse-neon {
+  animation: pulse-neon 2s ease-in-out infinite;
+}
+
+/* Spin animation */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Count-up */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up {
+  animation: fadeUp 0.3s ease-out;
+}
