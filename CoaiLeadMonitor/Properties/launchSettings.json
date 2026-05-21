@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "CoaiLeadMonitor (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "CoaiLeadMonitor (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

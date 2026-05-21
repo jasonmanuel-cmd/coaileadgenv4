@@ -62,11 +62,11 @@ Click **Scan Now** in the top right of the dashboard.
 
 ### Left sidebar — Stats
 
-| Number | Meaning |
-|--------|---------|
-| Total | All leads in your database |
-| Unread | Leads you have not opened yet |
-| Saved | Leads you bookmarked |
+| Number    | Meaning                          |
+| --------- | -------------------------------- |
+| Total     | All leads in your database       |
+| Unread    | Leads you have not opened yet    |
+| Saved     | Leads you bookmarked             |
 | Contacted | Leads you already reached out to |
 
 ### Left sidebar — Filters
@@ -92,11 +92,11 @@ Examples: `shopify` `logo` `app` `wordpress` `bakersfield` `flutter`
 
 Every lead gets a score from **1 to 10** showing how good the opportunity is.
 
-| Score | Meaning |
-|-------|---------|
-| 8–10 | Hot — person is ready to buy, says things like "need ASAP" or "have budget" |
-| 5–7 | Warm — clear need for your service, worth reaching out |
-| 1–4 | Cold — vague or possibly not relevant |
+| Score | Meaning                                                                     |
+| ----- | --------------------------------------------------------------------------- |
+| 8–10  | Hot — person is ready to buy, says things like "need ASAP" or "have budget" |
+| 5–7   | Warm — clear need for your service, worth reaching out                      |
+| 1–4   | Cold — vague or possibly not relevant                                       |
 
 Higher keyword matches + stronger buying signals = higher score.
 
@@ -106,15 +106,16 @@ Higher keyword matches + stronger buying signals = higher score.
 
 Each lead card has action buttons on the right side:
 
-| Button | What it does |
-|--------|-------------|
-| Arrow | Opens the original post in a new tab |
-| Bookmark | Saves the lead so you can find it later |
-| Checkmark | Marks as contacted |
-| Eye | Marks as read / unread |
-| Trash | Deletes the lead |
+| Button    | What it does                            |
+| --------- | --------------------------------------- |
+| Arrow     | Opens the original post in a new tab    |
+| Bookmark  | Saves the lead so you can find it later |
+| Checkmark | Marks as contacted                      |
+| Eye       | Marks as read / unread                  |
+| Trash     | Deletes the lead                        |
 
 **Recommended workflow:**
+
 1. Filter by **Unread**
 2. Sort by score — work highest scores first
 3. Click the arrow to read the post
@@ -140,17 +141,17 @@ Repeat Step 1 and Step 2 above. Your old leads will still be there.
 
 ## Sources It Scans
 
-| Source | What it finds |
-|--------|---------------|
-| **Craigslist** | 20 US cities — computer gigs, web design, creative, marketing, business services |
-| **Reddit r/forhire** | Freelance hiring posts |
-| **Reddit r/hiring** | Contract and freelance job posts |
-| **Reddit Search** | 18 keyword searches — "app developer", "need website", "shopify", "flutter", "apk" and more |
-| **WeWorkRemotely** | Remote jobs — full stack, frontend, backend, mobile, design, marketing |
-| **RemoteOK** | Remote dev and design jobs |
-| **Thumbtack** | People requesting web design, app dev, SEO, logo, graphic design |
-| **Nextdoor** | Local service requests near you |
-| **Oodle** | Local classifieds — web and app related posts |
+| Source               | What it finds                                                                               |
+| -------------------- | ------------------------------------------------------------------------------------------- |
+| **Craigslist**       | 20 US cities — computer gigs, web design, creative, marketing, business services            |
+| **Reddit r/forhire** | Freelance hiring posts                                                                      |
+| **Reddit r/hiring**  | Contract and freelance job posts                                                            |
+| **Reddit Search**    | 18 keyword searches — "app developer", "need website", "shopify", "flutter", "apk" and more |
+| **WeWorkRemotely**   | Remote jobs — full stack, frontend, backend, mobile, design, marketing                      |
+| **RemoteOK**         | Remote dev and design jobs                                                                  |
+| **Thumbtack**        | People requesting web design, app dev, SEO, logo, graphic design                            |
+| **Nextdoor**         | Local service requests near you                                                             |
+| **Oodle**            | Local classifieds — web and app related posts                                               |
 
 ---
 
@@ -161,6 +162,7 @@ Another copy is running. Open Task Manager → find `node.exe` → End Task → 
 
 **"Cannot find module" error**
 Run this first, then start again:
+
 ```
 npm install
 ```
@@ -177,6 +179,40 @@ Just open it again and run `npx tsx server/index.ts` — your leads are still sa
 
 ---
 
+---
+
+## Print / PDF Report
+
+Click the **Report** button next to the search bar to open a print-friendly page
+with **every lead in a single table**.
+
+- Opens in a new tab with all leads sorted by score
+- Click **Print / Save PDF** or press **Ctrl+P** to save as PDF
+- Prints in landscape mode for maximum readability
+- Shows score, source, category, posted date, status, and keywords for each lead
+
+Useful for: daily standups, client reports, offline review, archiving.
+
+---
+
+## Environment Variables (for hosting)
+
+| Variable          | Default       | Purpose                                   |
+| ----------------- | ------------- | ----------------------------------------- |
+| `PORT`            | `5000`        | Server port (Railway sets this)           |
+| `NODE_ENV`        | `development` | Set to `production` for live serving      |
+| `DATABASE_PATH`   | `data.db`     | Path to SQLite database file              |
+| `DISABLE_BROWSER` | `false`       | Set to `true` to skip Playwright scraping |
+
+On Railway:
+
+- Set `NODE_ENV=production`
+- Set `DISABLE_BROWSER=true` (not enough RAM for Chromium)
+- `DATABASE_PATH=/data/data.db` is already set in Dockerfile
+- Mount a persistent volume at `/data` to keep your database across restarts
+
+---
+
 ## Quick Reference Card
 
 ```
@@ -185,6 +221,8 @@ START    Open PowerShell in: C:\Users\blunt\Desktop\coai-lead-monitor
          Open browser:       http://localhost:5000
 
 SCAN     Click "Scan Now" — wait 5-10 min for full results
+
+REPORT   Click "Report" → Ctrl+P → Save as PDF
 
 STOP     Press Ctrl+C in the PowerShell window
 

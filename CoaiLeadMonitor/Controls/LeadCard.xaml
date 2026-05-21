@@ -1,0 +1,70 @@
+<UserControl
+    x:Class="CoaiLeadMonitor.Controls.LeadCard"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:conv="using:CoaiLeadMonitor.Converters"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <conv:ScoreToColorConverter x:Key="ScoreToColor"/>
+        <conv:ScoreToLabelConverter x:Key="ScoreToLabel"/>
+    </UserControl.Resources>
+
+    <Border Style="{StaticResource CardStyle}" Padding="16">
+        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="6">
+            <!-- Title -->
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind LeadData.Title, Mode=OneWay}"
+                       FontSize="16" FontWeight="SemiBold"
+                       TextTrimming="CharacterEllipsis" MaxLines="1"/>
+
+            <!-- Score badge -->
+            <Border Grid.Row="0" Grid.Column="1" CornerRadius="4"
+                    Background="{x:Bind LeadData.Score, Mode=OneWay, Converter={StaticResource ScoreToColor}}"
+                    Padding="8,2">
+                <TextBlock Text="{x:Bind LeadData.ScoreLabel, Mode=OneWay}"
+                           FontSize="12" FontWeight="Bold" Foreground="White"/>
+            </Border>
+
+            <!-- City + Time -->
+            <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="16">
+                <TextBlock Text="{x:Bind LeadData.CityLabel, Mode=OneWay}" Opacity="0.7" FontSize="13"/>
+                <TextBlock Text="{x:Bind LeadData.TimeAgo, Mode=OneWay}" Opacity="0.5" FontSize="13"/>
+            </StackPanel>
+
+            <!-- Keywords -->
+            <ItemsControl Grid.Row="2" Grid.ColumnSpan="2"
+                          ItemsSource="{x:Bind LeadData.KeywordList, Mode=OneWay}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="6"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="{ThemeResource SystemChromeLowColor}"
+                                CornerRadius="4" Padding="6,2">
+                            <TextBlock Text="{Binding}" FontSize="11"/>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- Action buttons -->
+            <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal"
+                        Spacing="8" Margin="0,6,0,0">
+                <Button x:Name="OpenUrlBtn" Content="Open" FontSize="12"
+                        Padding="12,4" Click="OnOpenUrl"/>
+                <Button x:Name="MarkReadBtn" Content="{x:Bind LeadData.IsRead, Mode=OneWay, FallbackValue=Mark Read}"
+                        FontSize="12" Padding="12,4" Click="OnMarkRead"/>
+                <Button x:Name="SaveBtn" Content="{x:Bind LeadData.IsSaved, Mode=OneWay, FallbackValue=Save}"
+                        FontSize="12" Padding="12,4" Click="OnToggleSave"/>
+                <Button x:Name="ContactBtn" Content="{x:Bind LeadData.IsContacted, Mode=OneWay, FallbackValue=Contact}"
+                        FontSize="12" Padding="12,4" Click="OnToggleContacted"/>
+                <Button Content="Delete" FontSize="12" Padding="12,4"
+                        Click="OnDelete" Foreground="Firebrick"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

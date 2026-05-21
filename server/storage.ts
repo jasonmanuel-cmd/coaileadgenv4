@@ -1,9 +1,10 @@
 import { drizzle } from "drizzle-orm/better-sqlite3";
 import Database from "better-sqlite3";
 import { leads, feedStats, type Lead, type InsertLead } from "@shared/schema";
-import { eq, desc, and, or, like, sql, gte } from "drizzle-orm";
+import { eq, desc, and, or, like, gte, count } from "drizzle-orm";
 
 const sqlite = new Database(process.env.DATABASE_PATH ?? "data.db");
+export { sqlite };
 const db = drizzle(sqlite);
 
 // Create tables
@@ -37,23 +38,64 @@ sqlite.exec(`
 // Migrate existing db that may not have score column yet
 try {
   sqlite.exec(`ALTER TABLE leads ADD COLUMN score INTEGER DEFAULT 5`);
-} catch { /* already exists — safe to ignore */ }
+} catch {
+  /* already exists — safe to ignore */
+}
 
 // ── Score a lead 1-10 based on keywords + buying signals ─────────────────
 const HOT_SIGNALS = [
-  "asap", "urgent", "immediately", "right away", "need now", "today",
-  "budget", "paid", "paying", "will pay", "pay well", "compensation",
-  "serious", "legitimate", "long term", "ongoing", "contract",
-  "ready to start", "ready to hire", "looking to hire",
+  "asap",
+  "urgent",
+  "immediately",
+  "right away",
+  "need now",
+  "today",
+  "budget",
+  "paid",
+  "paying",
+  "will pay",
+  "pay well",
+  "compensation",
+  "serious",
+  "legitimate",
+  "long term",
+  "ongoing",
+  "contract",
+  "ready to start",
+  "ready to hire",
+  "looking to hire",
 ];
 const WARM_SIGNALS = [
-  "need", "looking for", "want", "require", "seeking", "interested in",
-  "help with", "build", "create", "develop", "design", "fix", "update",
+  "need",
+  "looking for",
+  "want",
+  "require",
+  "seeking",
+  "interested in",
+  "help with",
+  "build",
+  "create",
+  "develop",
+  "design",
+  "fix",
+  "update",
 ];
 const HIGH_VALUE_KEYWORDS = [
-  "shopify", "ecommerce", "e-commerce", "app developer", "mobile app",
-  "android app", "ios app", "flutter", "react native", "full stack",
-  "web developer", "website", "web design", "seo", "digital marketing",
+  "shopify",
+  "ecommerce",
+  "e-commerce",
+  "app developer",
+  "mobile app",
+  "android app",
+  "ios app",
+  "flutter",
+  "react native",
+  "full stack",
+  "web developer",
+  "website",
+  "web design",
+  "seo",
+  "digital marketing",
 ];
 
 export function scoreLead(title: string, description: string, keywords: string[]): number {
@@ -64,15 +106,15 @@ export function scoreLead(title: string, description: string, keywords: string[]
   score += Math.min(keywords.length, 3); // up to +3 for keyword matches
 
   // High-value service keywords
-  const highValueHits = HIGH_VALUE_KEYWORDS.filter(k => text.includes(k)).length;
+  const highValueHits = HIGH_VALUE_KEYWORDS.filter((k) => text.includes(k)).length;
   score += Math.min(highValueHits, 2); // up to +2
 
   // Hot buying signals
-  const hotHits = HOT_SIGNALS.filter(s => text.includes(s)).length;
+  const hotHits = HOT_SIGNALS.filter((s) => text.includes(s)).length;
   score += Math.min(hotHits * 2, 3); // up to +3
 
   // Warm signals
-  const warmHits = WARM_SIGNALS.filter(s => text.includes(s)).length;
+  const warmHits = WARM_SIGNALS.filter((s) => text.includes(s)).length;
   score += Math.min(warmHits, 1); // up to +1
 
   // Has description (more info = better lead)
@@ -88,13 +130,10 @@ function get48hrCutoff(): string {
 
 export interface IStorage {
   upsertLead(lead: InsertLead): Lead | undefined;
-  getLeads(filters: {
-    city?: string;
-    keyword?: string;
-    status?: string;
-    page?: number;
-    limit?: number;
-  }): { leads: Lead[]; total: number };
+  getLeads(filters: { city?: string; keyword?: string; status?: string; page?: number; limit?: number }): {
+    leads: Lead[];
+    total: number;
+  };
   getLead(id: number): Lead | undefined;
   updateLead(id: number, updates: Partial<Pick<Lead, "isRead" | "isSaved" | "isContacted">>): Lead | undefined;
   deleteLead(id: number): void;
@@ -128,7 +167,8 @@ export const storage: IStorage = {
         .onConflictDoNothing()
         .returning()
         .get();
-    } catch {
+    } catch (err) {
+      console.error("[storage] upsertLead error:", err);
       return undefined;
     }
   },
@@ -139,15 +179,10 @@ export const storage: IStorage = {
 
     if (city && city !== "all") conditions.push(eq(leads.city, city));
     if (keyword) {
-      conditions.push(
-        or(
-          like(leads.title, `%${keyword}%`),
-          like(leads.description, `%${keyword}%`)
-        )
-      );
+      conditions.push(or(like(leads.title, `%${keyword}%`), like(leads.description, `%${keyword}%`)));
     }
-    if (status === "unread")    conditions.push(eq(leads.isRead, false));
-    if (status === "saved")     conditions.push(eq(leads.isSaved, true));
+    if (status === "unread") conditions.push(eq(leads.isRead, false));
+    if (status === "saved") conditions.push(eq(leads.isSaved, true));
     if (status === "contacted") conditions.push(eq(leads.isContacted, true));
 
     const allRows = db
@@ -178,31 +213,34 @@ export const storage: IStorage = {
   purgeOldLeads(): number {
     // Delete leads older than 48hrs that haven't been saved or contacted
     const cutoff = get48hrCutoff();
-    const result = sqlite.prepare(`
+    const result = sqlite
+      .prepare(
+        `
       DELETE FROM leads
       WHERE posted_at < ?
         AND is_saved = 0
         AND is_contacted = 0
-    `).run(cutoff);
+    `,
+      )
+      .run(cutoff);
     return result.changes;
   },
 
   getStats() {
     const cutoff = get48hrCutoff();
     const today = new Date().toISOString().slice(0, 10);
-    const all = db
-      .select()
-      .from(leads)
-      .where(gte(leads.postedAt, cutoff))
-      .all();
+    const all = db.select().from(leads).where(gte(leads.postedAt, cutoff)).all();
 
     const byCity: Record<string, number> = {};
-    let unread = 0, saved = 0, contacted = 0, newToday = 0;
+    let unread = 0,
+      saved = 0,
+      contacted = 0,
+      newToday = 0;
 
     for (const l of all) {
       byCity[l.city] = (byCity[l.city] || 0) + 1;
-      if (!l.isRead)     unread++;
-      if (l.isSaved)     saved++;
+      if (!l.isRead) unread++;
+      if (l.isSaved) saved++;
       if (l.isContacted) contacted++;
       if (l.fetchedAt.startsWith(today)) newToday++;
     }
@@ -214,17 +252,35 @@ export const storage: IStorage = {
       saved,
       contacted,
       byCity,
-      lastFetched: stat?.lastFetched ?? null,
+      lastFetched: stat?.lastFetchedAt ?? null,
       newToday,
     };
   },
 
   getRecentLeads(limit: number): Lead[] {
-    return db
-      .select()
-      .from(leads)
-      .orderBy(desc(leads.fetchedAt))
-      .limit(limit)
-      .all();
+    return db.select().from(leads).orderBy(desc(leads.fetchedAt)).limit(limit).all();
   },
 };
+
+export function persistStats(newCount: number, citiesChecked: number) {
+  const existing = db.select().from(feedStats).get();
+  if (existing) {
+    db.update(feedStats)
+      .set({
+        lastFetchedAt: new Date().toISOString(),
+        newLeads: newCount,
+        citiesChecked,
+      })
+      .where(eq(feedStats.id, existing.id))
+      .run();
+  } else {
+    db.insert(feedStats)
+      .values({
+        lastFetchedAt: new Date().toISOString(),
+        totalLeads: db.select({ c: count() }).from(leads).get()?.c ?? 0,
+        newLeads: newCount,
+        citiesChecked,
+      })
+      .run();
+  }
+}

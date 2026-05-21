@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="CoaiLeadMonitor.Pages.DashboardPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CoaiLeadMonitor.Controls"
+    mc:Ignorable="d">
+
+    <ScrollViewer>
+        <StackPanel Padding="24,16" Spacing="4">
+            <!-- Header -->
+            <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,0,0,16">
+                <TextBlock Text="Dashboard" Style="{StaticResource PageHeaderStyle}" VerticalAlignment="Center"/>
+                <Button x:Name="ScanBtn" Content="Scan Now" Click="OnScanClick"
+                        Padding="16,8" VerticalAlignment="Center"/>
+                <TextBlock x:Name="StatusText" Text="Ready" VerticalAlignment="Center" Opacity="0.6"/>
+            </StackPanel>
+
+            <!-- Stat tiles -->
+            <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,0,0,16">
+                <controls:StatTile x:Name="TotalTile" Label="Total Leads" Value="0"/>
+                <controls:StatTile x:Name="UnreadTile" Label="Unread" Value="0"/>
+                <controls:StatTile x:Name="SavedTile" Label="Saved" Value="0"/>
+                <controls:StatTile x:Name="ContactedTile" Label="Contacted" Value="0"/>
+                <controls:StatTile x:Name="TodayTile" Label="New Today" Value="0"/>
+            </StackPanel>
+
+            <!-- Recent leads -->
+            <TextBlock Text="Recent Leads" Style="{StaticResource SectionHeaderStyle}"/>
+            <ItemsControl x:Name="RecentLeadsList">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <controls:LeadCard Margin="0,0,0,8"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

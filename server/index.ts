@@ -1,9 +1,10 @@
 import "dotenv/config";
-import express, { Response, NextFunction } from 'express';
-import type { Request } from 'express';
+import express, { Response, NextFunction } from "express";
+import type { Request } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "node:http";
+import { sqlite } from "./storage";
 
 const app = express();
 const httpServer = createServer(app);
@@ -102,3 +103,25 @@ app.use((req, res, next) => {
     },
   );
 })();
+
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled Rejection:", reason);
+});
+
+function shutdown(signal: string) {
+  log(`Received ${signal}, shutting down gracefully...`);
+  httpServer.close(() => {
+    log("HTTP server closed");
+    sqlite.close();
+    log("SQLite connection closed");
+    process.exit(0);
+  });
+  // Force exit after 5s if graceful shutdown hangs
+  setTimeout(() => {
+    console.error("Forced shutdown after timeout");
+    process.exit(1);
+  }, 5000);
+}
+
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));

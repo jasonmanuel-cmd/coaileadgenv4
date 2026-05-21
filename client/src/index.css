@@ -37,23 +37,35 @@
   box-sizing: border-box;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   margin: 0;
   background: var(--surface);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   color: hsl(var(--foreground));
 }
 
 .font-mono {
-  font-family: 'Space Mono', monospace !important;
+  font-family: "Space Mono", monospace !important;
 }
 
 /* Scrollbar */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: var(--surface); }
-::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--neon-dim); }
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--neon-dim);
+}
 
 /* Neon glow effect */
 .neon-text {
@@ -68,7 +80,10 @@ html, body, #root {
 
 /* Lead card hover */
 .lead-card {
-  transition: border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+  transition:
+    border-color 0.15s,
+    transform 0.1s,
+    box-shadow 0.15s;
 }
 .lead-card:hover {
   border-color: var(--neon-dim) !important;
@@ -78,8 +93,15 @@ html, body, #root {
 
 /* Pulse animation for live indicator */
 @keyframes pulse-neon {
-  0%, 100% { opacity: 1; box-shadow: 0 0 6px rgba(0,230,0,0.8); }
-  50% { opacity: 0.5; box-shadow: 0 0 2px rgba(0,230,0,0.2); }
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 6px rgba(0, 230, 0, 0.8);
+  }
+  50% {
+    opacity: 0.5;
+    box-shadow: 0 0 2px rgba(0, 230, 0, 0.2);
+  }
 }
 .pulse-neon {
   animation: pulse-neon 2s ease-in-out infinite;
@@ -87,8 +109,12 @@ html, body, #root {
 
 /* Spin animation */
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 .animate-spin {
   animation: spin 1s linear infinite;
@@ -96,8 +122,14 @@ html, body, #root {
 
 /* Count-up */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .fade-up {
   animation: fadeUp 0.3s ease-out;

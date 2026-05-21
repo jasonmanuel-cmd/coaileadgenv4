@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="CoaiLeadMonitor.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:CoaiLeadMonitor.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <StackPanel Padding="24,16" Spacing="12">
+        <TextBlock Text="Settings" Style="{StaticResource PageHeaderStyle}"/>
+
+        <TextBlock Text="API Configuration" Style="{StaticResource SectionHeaderStyle}"/>
+        <TextBox x:Name="ApiUrlBox" Header="Backend URL" Text="http://localhost:5000" Width="400" HorizontalAlignment="Left"/>
+
+        <TextBlock Text="Refresh" Style="{StaticResource SectionHeaderStyle}"/>
+        <ToggleSwitch x:Name="AutoRefreshToggle" Header="Auto-refresh leads" IsOn="True"/>
+        <TextBox x:Name="IntervalBox" Header="Refresh interval (seconds)" Text="60" Width="200" HorizontalAlignment="Left"/>
+
+        <TextBlock Text="Notifications" Style="{StaticResource SectionHeaderStyle}"/>
+        <ToggleSwitch x:Name="NotificationsToggle" Header="Enable notifications" IsOn="True"/>
+
+        <Button Content="Save" Click="OnSaveClick" Padding="24,10" Margin="0,12,0,0"/>
+        <TextBlock x:Name="SaveStatusText" Opacity="0.6"/>
+    </StackPanel>
+</Page>
